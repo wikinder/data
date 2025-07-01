@@ -1,5 +1,5 @@
 name = "data"
-main = "src/worker.js"
+main = "src/index.ts"
 workers_dev = true
 compatibility_date = "2025-07-01"
 
