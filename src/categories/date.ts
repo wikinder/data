@@ -7,9 +7,6 @@ export default function handleDate(input: string): any {
     return null;
   }
 
-  const today: Date = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
   // "Thursday, January 1, 1970"
   const dateWithWeekday: string = date.toLocaleDateString('en-US', {
     weekday: 'long',
@@ -18,34 +15,8 @@ export default function handleDate(input: string): any {
     year: 'numeric',
   });
 
-  let difference: string;
-
-  if (date.getTime() === today.getTime()) {
-    difference = 'Today';
-  } else {
-    const isPast: boolean = date < today;
-
-    const duration: Duration = intervalToDuration(
-      isPast ? { start: date, end: today } : { start: today, end: date }
-    );
-
-    const parts: string[] = formatDuration(duration, {
-      format: ['years', 'months', 'days'],
-      delimiter: ', ',
-    }).split(', ');
-
-    if (parts.length > 1) {
-      parts.splice(-1, 1, `and ${parts.at(-1)}`);
-    }
-
-    if (parts.length === 2) {
-      difference = parts.join(' ');
-    } else {
-      difference = parts.join(', ');
-    }
-
-    difference += ` ${isPast ? 'ago' : 'from now'}`;
-  }
+  // "55 years, 6 months, and 1 day ago"
+  const difference: string = getDifference(date);
 
   return {
     title: dateWithWeekday,
@@ -95,4 +66,30 @@ function validate(input: string): any {
   }
 
   return { isValid: true, date, isoDatetime };
+}
+
+function getDifference(date: Date): string {
+  const today: Date = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  if (date.getTime() === today.getTime()) {
+    return 'Today';
+  }
+
+  const isPast: boolean = date < today;
+
+  const duration: Duration = intervalToDuration(
+    isPast ? { start: date, end: today } : { start: today, end: date }
+  );
+
+  const parts: string[] = formatDuration(duration, {
+    format: ['years', 'months', 'days'],
+    delimiter: ', ',
+  }).split(', ');
+
+  if (parts.length > 1) {
+    parts.splice(-1, 1, `and ${parts.at(-1)}`);
+  }
+
+  return `${parts.join(parts.length === 2 ? ' ' : ', ')} ${isPast ? 'ago' : 'from now'}`;
 }
