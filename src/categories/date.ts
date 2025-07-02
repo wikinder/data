@@ -78,9 +78,8 @@ function getDifference(date: Date): string {
 
   const isPast: boolean = date < today;
 
-  const duration: Duration = intervalToDuration(
-    isPast ? { start: date, end: today } : { start: today, end: date }
-  );
+  const [start, end]: Date[] = isPast ? [date, today] : [today, date];
+  const duration: Duration = intervalToDuration({ start, end });
 
   const parts: string[] = formatDuration(duration, {
     format: ['years', 'months', 'days'],
@@ -91,5 +90,6 @@ function getDifference(date: Date): string {
     parts.splice(-1, 1, `and ${parts.at(-1)}`);
   }
 
-  return `${parts.join(parts.length === 2 ? ' ' : ', ')} ${isPast ? 'ago' : 'from now'}`;
+  const joinedParts: string = parts.join(parts.length === 2 ? ' ' : ', ');
+  return `${joinedParts} ${isPast ? 'ago' : 'from now'}`;
 }
