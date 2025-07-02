@@ -6,6 +6,9 @@
     "deploy": "wrangler deploy",
     "start": "wrangler dev"
   },
+  "dependencies": {
+    "luxon": "^3.6.1"
+  },
   "devDependencies": {
     "wrangler": "^4.22.0"
   }
