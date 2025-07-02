@@ -1,51 +1,98 @@
-import { DateTime } from 'luxon';
+import { Duration, formatDuration, intervalToDuration } from 'date-fns';
 
 export default function handleDate(input: string): any {
-  if (!isValid(input)) {
+  const { isValid, date, isoDatetime } = validate(input);
+
+  if (!isValid) {
     return null;
   }
 
-  const date: DateTime = DateTime.fromISO(input, {
-    locale: 'en-US',
-    zone: 'utc',
-  });
-
-  if (!date.isValid) {
-    return null;
-  }
+  const today: Date = new Date();
+  today.setUTCHours(0, 0, 0, 0);
 
   // "Thursday, January 1, 1970"
-  const title: string = date.toLocaleString(DateTime.DATE_HUGE);
+  const dateWithWeekday: string = date.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+  });
 
-  // "1970-01-01T00:00:00Z"
-  const isoDatetime: string = date.toISO({ suppressMilliseconds: true });
+  let difference: string;
 
-  const heading: string = `
-      <time datetime="${isoDatetime}">${title}</time>
-    `;
+  if (date.getTime() === today.getTime()) {
+    difference = 'Today';
+  } else {
+    const isPast: boolean = date < today;
+
+    const duration: Duration = intervalToDuration(
+      isPast ? { start: date, end: today } : { start: today, end: date }
+    );
+
+    const parts: string[] = formatDuration(duration, {
+      format: ['years', 'months', 'days'],
+      delimiter: ', ',
+    }).split(', ');
+
+    if (parts.length > 1) {
+      parts.splice(-1, 1, `and ${parts.at(-1)}`);
+    }
+
+    if (parts.length === 2) {
+      difference = parts.join(' ');
+    } else {
+      difference = parts.join(', ');
+    }
+
+    difference += ` ${isPast ? 'ago' : 'from now'}`;
+  }
 
   return {
-    title,
-    heading,
+    title: dateWithWeekday,
+    heading: `<time datetime="${isoDatetime}">${dateWithWeekday}</time>`,
     data: {
-      'ISO 8601': date.toISODate(),
-      'Unix time': date.toUnixInteger(),
+      'Time difference': difference,
+      'ISO 8601': input,
+      'Unix time': Math.floor(date.getTime() / 1000),
     },
   };
 }
 
-function isValid(input: string): boolean {
-  const match: RegExpMatchArray | null = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+function validate(input: string): any {
+  const match: RegExpMatchArray | null = (
+    input.match(/^(\d{4})-(\d{2})-(\d{2})$/)
+  );
 
   if (!match) {
-    return false;
+    return { isValid: false };
   }
 
-  const [year, month, day] = match.slice(1).map((part: string) => parseInt(part, 10));
-
-  return (
-    1583 <= year && year <= 9999
-    && 1 <= month && month <= 12
-    && 1 <= day && day <= 31
+  const [year, month, day]: number[] = (
+    match.slice(1).map((part: string) => parseInt(part, 10))
   );
+
+  if (
+    !(
+      (1583 <= year && year <= 9999)
+      && (1 <= month && month <= 12)
+      && (1 <= day && day <= 31)
+    )
+  ) {
+    return { isValid: false };
+  }
+
+  const isoDatetime: string = `${input}T00:00:00Z`;
+  const date: Date = new Date(isoDatetime);
+
+  if (
+    !(
+      date.getUTCFullYear() === year
+      && date.getUTCMonth() === month - 1
+      && date.getUTCDate() === day
+    )
+  ) {
+    return { isValid: false };
+  }
+
+  return { isValid: true, date, isoDatetime };
 }

@@ -11,13 +11,15 @@ export default {
     // Parse the URL
     const url: URL = new URL(request.url);
 
-    const match: RegExpMatchArray | null = url.pathname.match(/^\/([a-z]+)\/(.+)$/);
+    const match: RegExpMatchArray | null = (
+      url.pathname.match(/^\/([a-z]+)\/(.+)$/)
+    );
 
     if (!match) {
       return NOT_FOUND;
     }
 
-    const [, category, input] = match;
+    const [, category, input]: string[] = match;
 
     if (!(category in HANDLERS)) {
       return NOT_FOUND;
@@ -41,7 +43,9 @@ export default {
       </tr>`;
     }
 
-    const capitalizedCategory: string = category[0].toUpperCase() + category.slice(1);
+    const capitalizedCategory: string = (
+      category[0].toUpperCase() + category.slice(1)
+    );
 
     const html: string = `<!DOCTYPE html>
 <html lang="en-US">
