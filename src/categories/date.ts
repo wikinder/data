@@ -1,7 +1,7 @@
 import { Duration, formatDuration, intervalToDuration } from 'date-fns';
 
 export default function handleDate(input: string): any {
-  const { isValid, date, isoDatetime } = validate(input);
+  const { isValid, date, isoDatetime }: any = validate(input);
 
   if (!isValid) {
     return null;
@@ -29,6 +29,9 @@ export default function handleDate(input: string): any {
   };
 }
 
+/**
+ * Validate an input
+ */
 function validate(input: string): any {
   const match: RegExpMatchArray | null = (
     input.match(/^(\d{4})-(\d{2})-(\d{2})$/)
@@ -68,6 +71,9 @@ function validate(input: string): any {
   return { isValid: true, date, isoDatetime };
 }
 
+/**
+ * Calculate the difference between a given date and today (00:00:00 UTC)
+ */
 function getDifference(date: Date): string {
   const today: Date = new Date();
   today.setUTCHours(0, 0, 0, 0);

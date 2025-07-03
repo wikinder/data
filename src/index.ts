@@ -1,4 +1,4 @@
-/*
+/**
  * data.wikinder.org - A web service that provides information about various
  * categories of data
  */
