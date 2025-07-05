@@ -14,7 +14,7 @@ export default function handleNumber(input: string): any {
   return {
     title: num,
     data: {
-      'Property': `${num} is an ${num % 2 === 0 ? 'even' : 'odd'} number.`,
+      'Property': `${num} is ${num % 2 === 0 ? 'an even' : 'an odd'} number.`,
     },
   };
 }
