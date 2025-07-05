@@ -6,7 +6,7 @@ export default function handleNumber(input: string): any {
   let num: number;
 
   if (input === '') {
-    num = Math.floor(Math.random() * (2**32 - 1));
+    num = Math.floor(Math.random() * 2**32);
   } else {
     num = parseInt(input, 10);
   }
