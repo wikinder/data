@@ -6,10 +6,12 @@
 // Import the functions that handle data for each category
 import handleColor from './categories/color';
 import handleDate from './categories/date';
+import handleNumber from './categories/number';
 
 const DATA_HANDLERS: any = {
   color: handleColor,
   date: handleDate,
+  number: handleNumber,
 };
 
 const NOT_FOUND: Response = new Response(null, { status: 404 });

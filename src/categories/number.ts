@@ -1,0 +1,29 @@
+export default function handleNumber(input: string): any {
+  if (!isValid(input)) {
+    return null;
+  }
+
+  const num: number = parseInt(input, 10);
+
+  return {
+    title: input,
+    data: {
+      'Property': num % 2 === 0 ? 'Even' : 'Odd',
+    },
+  };
+}
+
+function isValid(input: string): boolean {
+  if (input === '') {
+    return true;
+  }
+
+  const match: RegExpMatchArray | null = input.match(/^(0|[1-9][0-9]{0,9})$/);
+
+  if (!match) {
+    return false;
+  }
+
+  const num: number = parseInt(match[1], 10);
+  return 0 <= num && num <= 4294967295;
+}
