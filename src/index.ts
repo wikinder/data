@@ -1,6 +1,5 @@
 /**
- * data.wikinder.org - A web service that provides information about various
- * categories of data
+ * data.wikinder.org - A web service that provides various categories of data
  */
 
 // Import the functions that handle data for each category
