@@ -16,7 +16,9 @@ export default function handleColor(input: string): any {
   }
 
   return {
-    title: `#${code} Hex Color`,
+    title: `#${code}`,
+    heading: `#${code} Hex Color`,
+    category: 'Hex Color',
     style: `
 
       body {
