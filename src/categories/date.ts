@@ -1,11 +1,27 @@
 import { Duration, formatDuration, intervalToDuration } from 'date-fns';
 
 export default function handleDate(input: string): any {
-  const { isValid, date, isoDatetime }: any = validate(input);
-
-  if (!isValid) {
+  if (!isValid(input)) {
     return null;
   }
+
+  const today: Date = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+
+  let isoDate: string;
+
+  if (input === '') {
+    isoDate = [
+      today.getUTCFullYear(),
+      `${today.getUTCMonth() + 1}`.padStart(2, '0'),
+      `${today.getUTCDate()}`.padStart(2, '0'),
+    ].join('-');
+  } else {
+    isoDate = input;
+  }
+
+  const isoDatetime: string = `${isoDate}T00:00:00Z`;
+  const date: Date = new Date(isoDatetime);
 
   // "Thursday, January 1, 1970"
   const dateWithWeekday: string = date.toLocaleDateString('en-US', {
@@ -16,14 +32,14 @@ export default function handleDate(input: string): any {
   });
 
   // "55 years, 6 months, and 1 day ago"
-  const difference: string = getDifference(date);
+  const difference: string = getDifference(date, today);
 
   return {
     title: dateWithWeekday,
     heading: `<time datetime="${isoDatetime}">${dateWithWeekday}</time>`,
     data: {
-      'Time difference': difference,
-      'ISO 8601': input,
+      'How long ago': difference,
+      'ISO 8601': isoDate,
       'Unix time': Math.floor(date.getTime() / 1000),
     },
   };
@@ -32,13 +48,17 @@ export default function handleDate(input: string): any {
 /**
  * Validate an input
  */
-function validate(input: string): any {
+function isValid(input: string): boolean {
+  if (input === '') {
+    return true;
+  }
+
   const match: RegExpMatchArray | null = (
     input.match(/^(\d{4})-(\d{2})-(\d{2})$/)
   );
 
   if (!match) {
-    return { isValid: false };
+    return false;
   }
 
   const [year, month, day]: number[] = (
@@ -52,11 +72,10 @@ function validate(input: string): any {
       && (1 <= day && day <= 31)
     )
   ) {
-    return { isValid: false };
+    return false;
   }
 
-  const isoDatetime: string = `${input}T00:00:00Z`;
-  const date: Date = new Date(isoDatetime);
+  const date: Date = new Date(`${input}T00:00:00Z`);
 
   if (
     !(
@@ -65,19 +84,16 @@ function validate(input: string): any {
       && date.getUTCDate() === day
     )
   ) {
-    return { isValid: false };
+    return false;
   }
 
-  return { isValid: true, date, isoDatetime };
+  return true;
 }
 
 /**
  * Calculate the difference between a given date and today (00:00:00 UTC)
  */
-function getDifference(date: Date): string {
-  const today: Date = new Date();
-  today.setUTCHours(0, 0, 0, 0);
-
+function getDifference(date: Date, today: Date): string {
   if (date.getTime() === today.getTime()) {
     return 'Today';
   }

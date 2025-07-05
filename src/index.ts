@@ -4,9 +4,11 @@
  */
 
 // Import the functions that handle data for each category
+import handleColor from './categories/color';
 import handleDate from './categories/date';
 
 const DATA_HANDLERS: any = {
+  color: handleColor,
   date: handleDate,
 };
 
@@ -14,45 +16,80 @@ const NOT_FOUND: Response = new Response(null, { status: 404 });
 
 export default {
   async fetch(request: Request): Promise<Response> {
-    // Parse URL path in the format "/[category]/[input]", where:
-    // - [category]: the category that the data falls into (e.g., "date")
-    // - [input]: the data value (e.g., "1970-01-01")
     const url: URL = new URL(request.url);
     const path: string = url.pathname;
-    const match: RegExpMatchArray | null = path.match(/^\/([a-z]+)\/(.+)$/);
 
-    if (!match) {
-      return NOT_FOUND;
-    }
+    let title: string;
+    let style: string | undefined;
+    let heading: string | undefined;
+    let content: string;
 
-    const [category, input]: string[] = match.slice(1);
+    if (path === '/') {
+      title = 'Data';
 
-    if (!(category in DATA_HANDLERS)) {
-      return NOT_FOUND;
-    }
+      content = `<ul>`;
 
-    // Get the output
-    const output: any = DATA_HANDLERS[category](input);
+      for (const category of Object.keys(DATA_HANDLERS)) {
+        content += `
+      <li>
+        <a href="${category}/">${capitalize(category)}</a>
+      </li>`;
+      }
 
-    if (!output) {
-      return NOT_FOUND;
-    }
+      content += `
+    </ul>`;
+    } else {
+      // Parse URL path in the format "/[category]/[input]", where:
+      // - [category]: the category that the data falls into (e.g., "date")
+      // - [input]: the data value (e.g., "1970-01-01")
+      const match: RegExpMatchArray | null = path.match(/^\/([a-z]+)\/(.*)$/);
 
-    // Convert the output to HTML
-    let rowsHtml: string = '';
+      if (!match) {
+        return NOT_FOUND;
+      }
 
-    for (const [key, value] of Object.entries(output.data)) {
-      rowsHtml += `
+      const [category, input]: string[] = match.slice(1);
+
+      if (!(category in DATA_HANDLERS)) {
+        return NOT_FOUND;
+      }
+
+      // Get the output
+      const output: any = DATA_HANDLERS[category](input);
+
+      if (!output) {
+        return NOT_FOUND;
+      }
+
+      title = `${output.title} | ${output.category ?? capitalize(category)} Data`;
+
+      style = `
+    <style>
+      #data th {
+        text-align: left;
+      }${output.style ?? ''}
+    </style>`;
+
+      heading = output.heading ?? output.title;
+
+      // Convert the output to HTML
+      content = `<table id="data">`;
+
+      if (output.data) {
+        for (const [key, value] of Object.entries(output.data)) {
+          content += `
       <tr>
         <th scope="row">${key}</th>
         <td>${value}</td>
       </tr>`;
-    }
+        }
 
-    // Capitalize the category name for display purposes
-    const capitalizedCategory: string = (
-      category.replace(/^./, (first: string) => first.toUpperCase())
-    );
+        content += `
+    `;
+      }
+
+      content += `</table>`;
+    }
 
     const html: string = `<!DOCTYPE html>
 <html lang="en-US">
@@ -60,20 +97,14 @@ export default {
     <meta charset="utf-8">
     <meta name="color-scheme" content="light dark">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>${output.title} | ${capitalizedCategory} Data</title>
+    <title>${title}</title>
     <link rel="canonical" href="https://data.wikinder.org${path}">
-    <link rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/">
-    <style>
-      #data th {
-        text-align: left;
-      }
-    </style>
+    <link rel="license" href="https://creativecommons.org/publicdomain/zero/1.0/">${style ?? ''}
   </head>
   <body>
-    <h1>${output.heading}</h1>
+    <h1>${heading ?? title}</h1>
 
-    <table id="data">${rowsHtml}
-    </table>
+    ${content}
   </body>
 </html>
 `;
@@ -83,3 +114,7 @@ export default {
     });
   },
 };
+
+function capitalize(str: string): string {
+  return str.replace(/^./, (first: string) => first.toUpperCase());
+}
