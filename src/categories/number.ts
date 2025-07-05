@@ -3,10 +3,16 @@ export default function handleNumber(input: string): any {
     return null;
   }
 
-  const num: number = parseInt(input, 10);
+  let num: number;
+
+  if (input === '') {
+    num = Math.floor(Math.random() * (2**32 - 1));
+  } else {
+    num = parseInt(input, 10);
+  }
 
   return {
-    title: input,
+    title: num,
     data: {
       'Property': num % 2 === 0 ? 'Even' : 'Odd',
     },
