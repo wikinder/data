@@ -1,5 +1,5 @@
 name = "data"
-main = "src/index.ts"
+main = "src/index.tsx"
 workers_dev = true
 compatibility_date = "2025-07-01"
 
