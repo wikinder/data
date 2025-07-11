@@ -2,6 +2,8 @@
  * JSX component for the data pages
  */
 
+import { css } from 'hono/css';
+
 import { Base } from './Base';
 
 export const Data = ({
@@ -15,7 +17,7 @@ export const Data = ({
 }) => (
   <Base
     title={`${isIndex ? '' : `${title} | `}${category} Data`}
-    style={`
+    style={css`
       #data td,
       #data th {
         text-align: left;

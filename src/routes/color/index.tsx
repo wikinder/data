@@ -1,3 +1,5 @@
+import { css } from 'hono/css';
+
 /**
  * Handles hex colors like "ffc0cb"
  */
@@ -8,7 +10,7 @@ export function handleColor(input: string = getRandom()) {
 
   return {
     title: `#${input}`,
-    style: `
+    style: css`
       body {
         background-color: #${input};
       }
