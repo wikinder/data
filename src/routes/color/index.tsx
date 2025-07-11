@@ -1,7 +1,7 @@
 /**
  * Handles hex colors like "ffc0cb"
  */
-export function handleColor(input: string = getRandomColor()) {
+export function handleColor(input: string = getRandom()) {
   if (!isValid(input)) {
     return null;
   }
@@ -26,7 +26,7 @@ function isValid(input: string): boolean {
 /**
  * Returns a random hex color
  */
-function getRandomColor(): string {
+function getRandom(): string {
   return (
     Math.floor(Math.random() * (0xffffff + 1))
       .toString(16)
