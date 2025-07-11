@@ -24,7 +24,7 @@ function isValid(input: string): boolean {
 }
 
 /**
- * Returns a random hex color
+ * Returns a random color
  */
 function getRandom(): string {
   return (
