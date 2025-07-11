@@ -1,63 +1,60 @@
 /**
- * Data - A web service that provides various categories of data
+ * Data - A web service that provides data in various categories
  */
 
 import { Hono } from 'hono';
 import { jsxRenderer } from 'hono/jsx-renderer';
+import { appendTrailingSlash, trimTrailingSlash } from 'hono/trailing-slash';
 
 // Import JSX components
 import { Home } from './components/Home';
 import { Data } from './components/Data';
 
-// Import functions that handle each category of data
+// Import functions to handle data for each category
 import { ROUTES } from './routes';
 
+// Canonical URL of the home page
 const SITE_URL = new URL('https://data.wikinder.org/');
 
 const app = new Hono();
-
 app.get('*', jsxRenderer());
 
-// Home page
-app.get('/', (context) => {
-  const slugs = Object.keys(ROUTES);
+// Route the home page
+app.get('/', (c) => {
   const categories = Object.fromEntries(
-    slugs.map((slug) => [`${slug}/`, capitalize(slug)])
+    Object.keys(ROUTES)
+      .map((category) => [`${category}/`, capitalize(category)])
   );
 
-  return context.render(
-    <Home categories={categories} canonicalUrl={SITE_URL} />
-  );
+  return c.render(<Home categories={categories} canonicalUrl={SITE_URL} />);
 });
 
-// Data page
-app.get('/:category{[a-z]+}/:input', handler);
-app.get('/:category{[a-z]+}/*', handler);
+// Route the data pages (like "/date/1970-01-01" or "/date/")
+app.get('/:category', appendTrailingSlash());
+app.get('/:category/:input/', trimTrailingSlash());
+app.on('GET', ['/:category/', '/:category/:input'], (c) => {
+  const { category, input } = c.req.param();
 
-function handler(context) {
-  const { category, input } = context.req.param();
+  if (!Object.hasOwn(ROUTES, category)) {
+    return c.notFound();
+  }
 
   // Get the output
-  const output = ROUTES?.[category](input);
+  const output = ROUTES[category](input);
 
   if (!output) {
-    return context.notFound();
+    return c.notFound();
   }
 
-  let path = context.req.path;
-
-  if (input == null && !path.endsWith('/')) {
-    path += '/';
-  }
-
-  return context.render(
+  return c.render(
     <Data
       category={output.category ?? capitalize(category)}
-      canonicalUrl={new URL(path, SITE_URL)}
+      isIndex={input == null}
+      canonicalUrl={new URL(c.req.path, SITE_URL)}
       {...output}
     />
   );
-}
+});
 
 function capitalize(str: string) {
   return str.replace(/^./, (first) => first.toUpperCase());

@@ -1,4 +1,7 @@
-export function handleNumber(input: string = getRandomNumber()) {
+/**
+ * Handles natural numbers (including 0)
+ */
+export function handleNumber(input: string = getRandom()) {
   if (!isValid(input)) {
     return null;
   }
@@ -13,8 +16,11 @@ export function handleNumber(input: string = getRandomNumber()) {
   };
 }
 
+/**
+ * Validates an input
+ */
 function isValid(input: string): boolean {
-  const match = input.match(/^(0|[1-9][0-9]{0,9})$/);
+  const match = input.match(/^(0|[1-9]\d*)$/);
 
   if (!match) {
     return false;
@@ -24,6 +30,9 @@ function isValid(input: string): boolean {
   return 0 <= num && num <= 4294967295;
 }
 
-function getRandomNumber(): string {
+/**
+ * Returns a random number
+ */
+function getRandom(): string {
   return String(Math.floor(Math.random() * 4294967296));
 }

@@ -1,3 +1,6 @@
+/**
+ * Handles hex colors like "ffc0cb"
+ */
 export function handleColor(input: string = getRandomColor()) {
   if (!isValid(input)) {
     return null;
@@ -5,27 +8,28 @@ export function handleColor(input: string = getRandomColor()) {
 
   return {
     title: `#${input}`,
-    heading: `#${input} Hex Color`,
-    category: 'Hex Color',
     style: `
-body {
-  background-color: #${input};
-}
-`,
-    data: {},
+      body {
+        background-color: #${input};
+      }
+    `,
   };
 }
 
+/**
+ * Validates an input
+ */
 function isValid(input: string): boolean {
   return /^[0-9a-f]{6}$/.test(input);
 }
 
+/**
+ * Returns a random hex color
+ */
 function getRandomColor(): string {
-  let color = '';
-
-  for (let i = 0; i < 6; i++) {
-    color += Math.floor(Math.random() * 16).toString(16);
-  }
-
-  return color;
+  return (
+    Math.floor(Math.random() * (0xffffff + 1))
+      .toString(16)
+      .padStart(6, '0')
+  );
 }

@@ -1,3 +1,6 @@
+/**
+ * Handles dates in ISO 8601 format (YYYY-MM-DD)
+ */
 export function handleDate(input: string = getToday()) {
   if (!isValid(input)) {
     return null;
@@ -24,8 +27,11 @@ export function handleDate(input: string = getToday()) {
   };
 }
 
-function isValid(input: string) {
-  const match = input.match(/^([0-9]{4})-([0-9]{2})-([0-9]{2})$/);
+/**
+ * Validates an input
+ */
+function isValid(input: string): boolean {
+  const match = input.match(/^(\d{4})-(\d{2})-(\d{2})$/);
 
   if (!match) {
     return false;
@@ -34,9 +40,9 @@ function isValid(input: string) {
   const [year, month, day] = match.slice(1).map((str) => parseInt(str, 10));
 
   if (
-    !((1583 <= year && year <= 9999)
-      && (1 <= month && month <= 12)
-      && (1 <= day && day <= 31))
+    !(1583 <= year && year <= 9999
+      && 1 <= month && month <= 12
+      && 1 <= day && day <= 31)
   ) {
     return false;
   }
@@ -51,7 +57,7 @@ function isValid(input: string) {
 }
 
 /**
- * Returns the current date in UTC as an ISO string (YYYY-MM-DD)
+ * Returns the current date in UTC
  */
 function getToday(): string {
   const now = new Date();

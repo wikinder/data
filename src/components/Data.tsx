@@ -1,3 +1,7 @@
+/**
+ * JSX component for the data pages
+ */
+
 import { Base } from './Base';
 
 export const Data = ({
@@ -6,21 +10,24 @@ export const Data = ({
   style = '',
   heading = title,
   data,
-  ...properties
+  isIndex,
+  ...props
 }) => (
   <Base
-    title={`${title} | ${category} Data`}
+    title={`${isIndex ? '' : `${title} | `}${category} Data`}
     style={`
-#data td,
-#data th {
-  text-align: left;
-}
-${style}`}
+      #data td,
+      #data th {
+        text-align: left;
+      }
+
+      ${style}
+    `}
     heading={heading}
-    {...properties}
+    {...props}
   >
     <table id="data">
-      {Object.entries(data).map(([key, value]) => (
+      {data && Object.entries(data).map(([key, value]) => (
         <tbody>
           <tr>
             <th scope="rowgroup">{key}</th>
