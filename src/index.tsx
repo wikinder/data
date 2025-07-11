@@ -56,7 +56,7 @@ app.on('GET', ['/:category/', '/:category/:input'], (c) => {
   );
 });
 
-function capitalize(str: string) {
+function capitalize(str: string): string {
   return str.replace(/^./, (first) => first.toUpperCase());
 }
 
