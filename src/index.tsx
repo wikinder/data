@@ -42,7 +42,7 @@ app.on('GET', ['/:category/', '/:category/:input'], (c) => {
   // Get the output
   const output = ROUTES[category](input);
 
-  if (!output) {
+  if (output == null) {
     return c.notFound();
   }
 
