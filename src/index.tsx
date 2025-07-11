@@ -17,6 +17,7 @@ import { ROUTES } from './routes';
 const SITE_URL = new URL('https://data.wikinder.org/');
 
 const app = new Hono();
+app.notFound((c) => c.text('', 404));
 app.get('*', jsxRenderer());
 
 // Route the home page
