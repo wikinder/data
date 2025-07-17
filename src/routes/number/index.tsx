@@ -10,7 +10,7 @@ export function handleNumber(input: string = getRandom()) {
   const isEven = num % 2n === 0n;
 
   return {
-    title: String(num),
+    pageName: `Number ${num}`,
     data: {
       'Properties': `${num} is ${isEven ? 'an even' : 'an odd'} number.`,
     },
@@ -35,5 +35,5 @@ function isValid(input: string): boolean {
  * Returns a random number
  */
 function getRandom(): string {
-  return String(Math.floor(Math.random() * 4294967296));
+  return `${Math.floor(Math.random() * 4294967296)}`;
 }

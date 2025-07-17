@@ -46,9 +46,10 @@ app.on('GET', ['/:categoryKey/', '/:categoryKey/:input'], (c) => {
     return c.notFound();
   }
 
+  output.categoryLabel ??= capitalize(categoryKey);
+
   return c.render(
     <Data
-      categoryLabel={output.categoryLabel ?? capitalize(categoryKey)}
       isIndex={input == null}
       canonicalUrl={new URL(c.req.path, SITE_URL)}
       {...output}

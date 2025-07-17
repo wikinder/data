@@ -7,16 +7,18 @@ import { css } from 'hono/css';
 import { Base } from './Base';
 
 export const Data = ({
-  title,
-  categoryLabel,
-  style = '',
-  heading = title,
-  data,
   isIndex,
+  categoryLabel,
+  indexPageTitle = `${categoryLabel} Data`,
+  pageName,
+  siteName = pageName.startsWith(categoryLabel) ? 'Data' : indexPageTitle,
+  style = '',
+  heading = pageName,
+  data,
   ...props
 }) => (
   <Base
-    title={`${isIndex ? '' : `${title} | `}${categoryLabel} Data`}
+    title={isIndex ? indexPageTitle : `${pageName} | ${siteName}`}
     style={css`
       #data td,
       #data th {

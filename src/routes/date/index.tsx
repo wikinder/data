@@ -18,10 +18,10 @@ export function handleDate(input: string = getToday()) {
   });
 
   return {
-    title: dateWithWeekday,
+    pageName: dateWithWeekday,
     data: {
       'ISO 8601': input,
-      'Unix time': String(Math.floor(date.getTime() / 1000)),
+      'Unix time': `${Math.floor(date.getTime() / 1000)}`,
     },
   };
 }
@@ -63,7 +63,7 @@ function getToday(): string {
 
   return [
     now.getUTCFullYear(),
-    String(now.getUTCMonth() + 1).padStart(2, '0'),
-    String(now.getUTCDate()).padStart(2, '0'),
+    `${now.getUTCMonth() + 1}`.padStart(2, '0'),
+    `${now.getUTCDate()}`.padStart(2, '0'),
   ].join('-');
 }

@@ -9,7 +9,7 @@ export function handleColor(input: string = getRandom()) {
   }
 
   return {
-    title: `#${input}`,
+    pageName: `Color #${input}`,
     style: css`
       body {
         background-color: #${input};
