@@ -23,7 +23,7 @@ export const Base = ({
       {style && <Style>{css`${style}`}</Style>}
     </head>
     <body>
-      <h1 dangerouslySetInnerHTML={{ __html: heading }} />
+      <h1>{heading}</h1>
 
       {children}
     </body>

@@ -19,7 +19,6 @@ export function handleDate(input: string = getToday()) {
 
   return {
     title: dateWithWeekday,
-    heading: <time datetime={isoDatetime}>{dateWithWeekday}</time>,
     data: {
       'ISO 8601': input,
       'Unix time': Math.floor(date.getTime() / 1000),

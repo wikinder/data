@@ -11,7 +11,7 @@ import { Home } from './components/Home';
 import { Data } from './components/Data';
 
 // Import functions to handle data for each category
-import { ROUTES } from './routes';
+import { DATA_HANDLERS } from './routes';
 
 // Canonical URL of the home page
 const SITE_URL = new URL('https://data.wikinder.org/');
@@ -23,7 +23,7 @@ app.get('*', jsxRenderer());
 // Route the home page
 app.get('/', (c) => {
   const categories = Object.fromEntries(
-    Object.keys(ROUTES)
+    Object.keys(DATA_HANDLERS)
       .map((category) => [`${category}/`, capitalize(category)])
   );
 
@@ -36,12 +36,12 @@ app.get('/:category/:input/', trimTrailingSlash());
 app.on('GET', ['/:category/', '/:category/:input'], (c) => {
   const { category, input } = c.req.param();
 
-  if (!Object.hasOwn(ROUTES, category)) {
+  if (!Object.hasOwn(DATA_HANDLERS, category)) {
     return c.notFound();
   }
 
   // Get the output
-  const output = ROUTES[category](input);
+  const output = DATA_HANDLERS[category](input);
 
   if (output == null) {
     return c.notFound();
