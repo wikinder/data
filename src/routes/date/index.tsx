@@ -21,7 +21,7 @@ export function handleDate(input: string = getToday()) {
     title: dateWithWeekday,
     data: {
       'ISO 8601': input,
-      'Unix time': Math.floor(date.getTime() / 1000),
+      'Unix time': String(Math.floor(date.getTime() / 1000)),
     },
   };
 }

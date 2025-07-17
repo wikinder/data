@@ -6,12 +6,13 @@ export function handleNumber(input: string = getRandom()) {
     return null;
   }
 
-  const num = parseInt(input, 10);
+  const num = BigInt(input);
+  const isEven = num % 2n === 0n;
 
   return {
-    title: num,
+    title: String(num),
     data: {
-      'Properties': `${num} is ${num % 2 === 0 ? 'an even' : 'an odd'} number.`,
+      'Properties': `${num} is ${isEven ? 'an even' : 'an odd'} number.`,
     },
   };
 }
@@ -20,14 +21,14 @@ export function handleNumber(input: string = getRandom()) {
  * Validates an input
  */
 function isValid(input: string): boolean {
-  const match = input.match(/^(0|[1-9]\d*)$/);
+  const match = input.match(/^(0|[1-9][0-9]*)$/);
 
   if (!match) {
     return false;
   }
 
-  const num = parseInt(match[1], 10);
-  return 0 <= num && num <= 4294967295;
+  const num = BigInt(match[1]);
+  return 0n <= num && num <= 18446744073709551615n;
 }
 
 /**
