@@ -23,25 +23,24 @@ app.get('*', jsxRenderer());
 // Route the home page
 app.get('/', (c) => {
   const categories = Object.fromEntries(
-    Object.keys(DATA_HANDLERS)
-      .map((category) => [`${category}/`, capitalize(category)])
+    Object.keys(DATA_HANDLERS).map((key) => [`${key}/`, capitalize(key)])
   );
 
   return c.render(<Home categories={categories} canonicalUrl={SITE_URL} />);
 });
 
 // Route the data pages (like "/date/1970-01-01" or "/date/")
-app.get('/:category', appendTrailingSlash());
-app.get('/:category/:input/', trimTrailingSlash());
-app.on('GET', ['/:category/', '/:category/:input'], (c) => {
-  const { category, input } = c.req.param();
+app.get('/:categoryKey', appendTrailingSlash());
+app.get('/:categoryKey/:input/', trimTrailingSlash());
+app.on('GET', ['/:categoryKey/', '/:categoryKey/:input'], (c) => {
+  const { categoryKey, input } = c.req.param();
 
-  if (!Object.hasOwn(DATA_HANDLERS, category)) {
+  if (!Object.hasOwn(DATA_HANDLERS, categoryKey)) {
     return c.notFound();
   }
 
   // Get the output
-  const output = DATA_HANDLERS[category](input);
+  const output = DATA_HANDLERS[categoryKey](input);
 
   if (output == null) {
     return c.notFound();
@@ -49,7 +48,7 @@ app.on('GET', ['/:category/', '/:category/:input'], (c) => {
 
   return c.render(
     <Data
-      category={output.category ?? capitalize(category)}
+      categoryLabel={output.categoryLabel ?? capitalize(categoryKey)}
       isIndex={input == null}
       canonicalUrl={new URL(c.req.path, SITE_URL)}
       {...output}

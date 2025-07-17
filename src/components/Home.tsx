@@ -7,9 +7,9 @@ import { Base } from './Base';
 export const Home = ({ categories, ...props }) => (
   <Base title="Data" {...props}>
     <ul>
-      {Object.entries(categories).map(([url, name]) => (
+      {Object.entries(categories).map(([url, label]) => (
         <li>
-          <a href={url}>{name}</a>
+          <a href={url}>{label}</a>
         </li>
       ))}
     </ul>

@@ -8,7 +8,7 @@ import { Base } from './Base';
 
 export const Data = ({
   title,
-  category,
+  categoryLabel,
   style = '',
   heading = title,
   data,
@@ -16,7 +16,7 @@ export const Data = ({
   ...props
 }) => (
   <Base
-    title={`${isIndex ? '' : `${title} | `}${category} Data`}
+    title={`${isIndex ? '' : `${title} | `}${categoryLabel} Data`}
     style={css`
       #data td,
       #data th {
