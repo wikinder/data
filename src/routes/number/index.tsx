@@ -65,7 +65,7 @@ function factor(num: bigint): string {
   factorOut(2n);
   factorOut(3n);
 
-  // Factor out numbers of the form $6n \pm 1$
+  // Factor out numbers of the form $6k \pm 1$
   let step = 2n;
   for (let i = 5n; i * i <= rest; i += step, step = 6n - step) {
     factorOut(i);
