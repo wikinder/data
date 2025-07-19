@@ -71,7 +71,7 @@ function factor(num: bigint): string {
     factorOut(i);
   }
 
-  // If the number is prime
+  // If the given number is prime
   if (rest === num) {
     return `${num} (prime number)`;
   }
