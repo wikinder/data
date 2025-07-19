@@ -16,7 +16,7 @@ export function handleNumber(input: string = getRandom()) {
 
   // Even or odd
   const isEven = num % 2n === 0n;
-  outputData['Property'] = `${num} is ${isEven ? 'an even' : 'an odd'} number.`;
+  outputData['Property'] = `${num} is an ${isEven ? 'even' : 'odd'} number.`;
 
   return {
     pageName: `Number ${num}`,
