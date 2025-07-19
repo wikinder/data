@@ -1,3 +1,5 @@
+import { PRIMES } from './primes';
+
 /**
  * Handles natural numbers
  */
@@ -10,7 +12,7 @@ export function handleNumber(input: string = getRandom()) {
   const outputData = {};
 
   // Prime factorization
-  if (2n <= num && num <= 4294967295n) {
+  if (2n <= num && num < 2n**32n) {
     outputData['Prime factorization'] = factor(num);
   }
 
@@ -35,24 +37,29 @@ function isValid(input: string): boolean {
   }
 
   const num = BigInt(match[1]);
-  return 0n <= num && num <= 18446744073709551615n;
+  return 0n <= num && num < 2n**32n;
 }
 
 /**
  * Returns a random number
  */
 function getRandom(): string {
-  return `${Math.floor(Math.random() * 65536)}`;
+  return `${Math.floor(Math.random() * (2**16))}`;
 }
 
 /**
  * Performs prime factorization
  */
 function factor(num: bigint): string {
+  // If the number is a known prime
+  if (PRIMES.has(num)) {
+    return `${num} (prime number)`;
+  }
+
   let rest = num;
   const factors = {};
 
-  // Helper function to factor out a given number
+  // Helper function
   const factorOut = (i: bigint) => {
     while (rest % i === 0n) {
       factors[`${i}`] ??= 0n;
@@ -61,23 +68,34 @@ function factor(num: bigint): string {
     }
   };
 
-  // Factor out small primes
-  factorOut(2n);
-  factorOut(3n);
+  // Factor out known primes
+  for (const p of PRIMES) {
+    if (p * p > rest) {
+      break;
+    }
 
-  // Factor out numbers of the form $6k \pm 1$
-  let step = 2n;
-  for (let i = 5n; i * i <= rest; i += step, step = 6n - step) {
-    factorOut(i);
+    factorOut(p);
   }
 
-  // If the given number is prime
+  // Factor out numbers of the form $6k \pm 1$
+  // if (MAX_PRIME * MAX_PRIME < rest) {
+  //   let step = MAX_PRIME % 6n === 1n ? 4n : 2n;
+  //   let i = MAX_PRIME + step;
+
+  //   while (i * i <= rest) {
+  //     factorOut(i);
+  //     step = 6n - step;
+  //     i += step;
+  //   }
+  // }
+
+  // If the number is prime
   if (rest === num) {
     return `${num} (prime number)`;
   }
 
   // Add any remaining prime factor
-  if (rest !== 1n) {
+  if (rest > 1n) {
     factors[`${rest}`] ??= 0n;
     factors[`${rest}`]++;
   }
