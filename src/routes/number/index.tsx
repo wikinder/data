@@ -9,21 +9,31 @@ export function handleNumber(input: string = getRandom()) {
   }
 
   const num = BigInt(input);
-  const outputData = {};
+  const output = {
+    pageName: `Number ${num}`,
+    data: {},
+  };
 
   // Prime factorization
-  if (2n <= num && num < 2n**32n) {
-    outputData['Prime factorization'] = factor(num);
+  if (num > 1n) {
+    const { isPrime, primeFactors } = factor(num);
+
+    if (isPrime) {
+      output.pageName = `Prime number ${num}`;
+    } else {
+      output.data['Prime factorization'] = (
+        Object.entries(primeFactors)
+          .map(([p, exponent]) => exponent === 1n ? `${p}` : `${p}^${exponent}`)
+          .join(' × ')
+      );
+    }
   }
 
   // Even or odd
   const isEven = num % 2n === 0n;
-  outputData['Property'] = `${num} is an ${isEven ? 'even' : 'odd'} number.`;
+  output.data['Property'] = `${num} is an ${isEven ? 'even' : 'odd'} number.`;
 
-  return {
-    pageName: `Number ${num}`,
-    data: outputData,
-  };
+  return output;
 }
 
 /**
@@ -44,26 +54,26 @@ function isValid(input: string): boolean {
  * Returns a random number
  */
 function getRandom(): string {
-  return `${Math.floor(Math.random() * (2**16))}`;
+  return `${Math.floor(Math.random() * (2**32))}`;
 }
 
 /**
  * Performs prime factorization
  */
-function factor(num: bigint): string {
+function factor(num: bigint) {
   // If the number is a known prime
   if (PRIMES.has(num)) {
-    return `${num} (prime number)`;
+    return { isPrime: true };
   }
 
   let rest = num;
-  const factors = {};
+  const primeFactors = {};
 
   // Helper function
   const factorOut = (i: bigint) => {
     while (rest % i === 0n) {
-      factors[`${i}`] ??= 0n;
-      factors[`${i}`]++;
+      primeFactors[`${i}`] ??= 0n;
+      primeFactors[`${i}`]++;
       rest /= i;
     }
   };
@@ -81,7 +91,7 @@ function factor(num: bigint): string {
   // if (MAX_PRIME * MAX_PRIME < rest) {
   //   let step = MAX_PRIME % 6n === 1n ? 4n : 2n;
   //   let i = MAX_PRIME + step;
-
+  //
   //   while (i * i <= rest) {
   //     factorOut(i);
   //     step = 6n - step;
@@ -91,16 +101,14 @@ function factor(num: bigint): string {
 
   // If the number is prime
   if (rest === num) {
-    return `${num} (prime number)`;
+    return { isPrime: true };
   }
 
   // Add any remaining prime factor
   if (rest > 1n) {
-    factors[`${rest}`] ??= 0n;
-    factors[`${rest}`]++;
+    primeFactors[`${rest}`] ??= 0n;
+    primeFactors[`${rest}`]++;
   }
 
-  return Object.entries(factors)
-    .map(([p, exponent]) => exponent === 1n ? `${p}` : `${p}^${exponent}`)
-    .join(' * ');
+  return { primeFactors };
 }

@@ -11,7 +11,9 @@ export const Data = ({
   categoryLabel,
   indexPageTitle = `${categoryLabel} Data`,
   pageName,
-  siteName = pageName.startsWith(categoryLabel) ? 'Data' : indexPageTitle,
+  siteName = (
+    new RegExp(categoryLabel, 'i').test(pageName) ? 'Data' : indexPageTitle
+  ),
   style = '',
   heading = pageName,
   data,
