@@ -46,7 +46,7 @@ function getRandom(): string {
 }
 
 /**
- * Performs prime factorization of a number
+ * Performs prime factorization
  */
 function factor(num: bigint): string {
   let rest = num;
