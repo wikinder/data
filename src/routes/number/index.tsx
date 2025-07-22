@@ -1,4 +1,6 @@
-import { PRIMES } from './primes';
+import { PRIMES, PRIME_LIMIT } from './primes';
+
+const NUMBER_LIMIT = PRIME_LIMIT * PRIME_LIMIT;
 
 /**
  * Handles natural numbers
@@ -47,14 +49,14 @@ function isValid(input: string): boolean {
   }
 
   const num = BigInt(match[1]);
-  return 0n <= num && num < 2n**32n;
+  return 0n <= num && num < NUMBER_LIMIT;
 }
 
 /**
  * Returns a random number
  */
 function getRandom(): string {
-  return `${Math.floor(Math.random() * (2**32))}`;
+  return `${Math.floor(Math.random() * Number(NUMBER_LIMIT))}`;
 }
 
 /**
@@ -86,19 +88,6 @@ function factor(num: bigint) {
 
     factorOut(p);
   }
-
-  // Factor out numbers of the form $6k \pm 1$
-  // if (PRIME_LIMIT * PRIME_LIMIT < rest) {
-  //   let step = PRIME_LIMIT % 6n === 1n ? 4n : 2n;
-  //   let i = PRIME_LIMIT + step;
-  //
-  //   while (i * i <= rest) {
-  //     factorOut(i);
-  //
-  //     step = 6n - step;
-  //     i += step;
-  //   }
-  // }
 
   // If the number is prime
   if (rest === num) {

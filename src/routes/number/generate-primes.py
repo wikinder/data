@@ -2,8 +2,8 @@ from base64 import b64encode
 from itertools import cycle
 from sympy import sieve
 
-PRIME_LIMIT = 65536
-MAX_NUMBER = 65521 # 24 * BITMAP_SIZE + 1
+PRIME_LIMIT = '2n**20n'
+MAX_NUMBER = 1048609 # 24 * BITMAP_SIZE + 1
 sieve.extend(MAX_NUMBER)
 
 BITMAP_SIZE = (MAX_NUMBER - 1) // 24
@@ -19,7 +19,7 @@ for byte_index in range(BITMAP_SIZE):
 
 bitmap_base64 = b64encode(bitmap).decode('ascii')
 
-print(f"""export const PRIME_LIMIT = {PRIME_LIMIT}n;
+print(f"""export const PRIME_LIMIT = {PRIME_LIMIT};
 export const PRIMES = new Set([2n, 3n]);
 
 const bitmap_base64 = '{bitmap_base64}';
