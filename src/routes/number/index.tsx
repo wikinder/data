@@ -88,12 +88,13 @@ function factor(num: bigint) {
   }
 
   // Factor out numbers of the form $6k \pm 1$
-  // if (MAX_PRIME * MAX_PRIME < rest) {
-  //   let step = MAX_PRIME % 6n === 1n ? 4n : 2n;
-  //   let i = MAX_PRIME + step;
+  // if (PRIME_LIMIT * PRIME_LIMIT < rest) {
+  //   let step = PRIME_LIMIT % 6n === 1n ? 4n : 2n;
+  //   let i = PRIME_LIMIT + step;
   //
   //   while (i * i <= rest) {
   //     factorOut(i);
+  //
   //     step = 6n - step;
   //     i += step;
   //   }
