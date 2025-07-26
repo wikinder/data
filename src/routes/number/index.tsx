@@ -1,4 +1,5 @@
 import { getPrimeTable } from './prime-table';
+const NUMBER_LIMIT = 2n ** 40n;
 
 /**
  * Handles natural numbers
@@ -48,14 +49,14 @@ function isValid(input: string): boolean {
   }
 
   const num = BigInt(match[1]);
-  return 0n <= num && num <= BigInt(Number.MAX_SAFE_INTEGER);
+  return 0n <= num && num < NUMBER_LIMIT;
 }
 
 /**
  * Returns a random number
  */
 function getRandom(): string {
-  return `${1 + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
+  return `${Math.floor(Math.random() * Number(NUMBER_LIMIT))}`;
 }
 
 /**

@@ -2,7 +2,7 @@ from base64 import b64encode
 from itertools import cycle
 from sympy import sieve
 
-MAX_NUMBER = 94906249 # 24 * BITMAP_SIZE + 1
+MAX_NUMBER = 1048585 # 24 * BITMAP_SIZE + 1
 sieve.extend(MAX_NUMBER)
 
 BITMAP_SIZE = (MAX_NUMBER - 1) // 24
