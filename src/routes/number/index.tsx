@@ -1,11 +1,9 @@
-import { PRIMES, PRIME_LIMIT } from './primes';
-
-const NUMBER_LIMIT = PRIME_LIMIT * PRIME_LIMIT;
+import { getPrimeTable } from './prime-table';
 
 /**
  * Handles natural numbers
  */
-export function handleNumber(input: string = getRandom()) {
+export async function handleNumber(input: string = getRandom(), env) {
   if (!isValid(input)) {
     return null;
   }
@@ -18,7 +16,8 @@ export function handleNumber(input: string = getRandom()) {
 
   // Prime factorization
   if (num > 1n) {
-    const { isPrime, primeFactors } = factor(num);
+    const PRIME_TABLE = await getPrimeTable(env);
+    const { isPrime, primeFactors } = factor(num, PRIME_TABLE);
 
     if (isPrime) {
       output.pageName = `Prime number ${num}`;
@@ -49,22 +48,22 @@ function isValid(input: string): boolean {
   }
 
   const num = BigInt(match[1]);
-  return 0n <= num && num < NUMBER_LIMIT;
+  return 0n <= num && num <= BigInt(Number.MAX_SAFE_INTEGER);
 }
 
 /**
  * Returns a random number
  */
 function getRandom(): string {
-  return `${Math.floor(Math.random() * Number(NUMBER_LIMIT))}`;
+  return `${1 + Math.floor(Math.random() * Number.MAX_SAFE_INTEGER)}`;
 }
 
 /**
  * Performs prime factorization
  */
-function factor(num: bigint) {
+function factor(num: bigint, PRIME_TABLE) {
   // If the number is a known prime
-  if (PRIMES.has(num)) {
+  if (PRIME_TABLE.has(num)) {
     return { isPrime: true };
   }
 
@@ -81,7 +80,7 @@ function factor(num: bigint) {
   };
 
   // Factor out known primes
-  for (const p of PRIMES) {
+  for (const p of PRIME_TABLE) {
     if (p * p > rest) {
       break;
     }

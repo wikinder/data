@@ -32,7 +32,7 @@ app.get('/', (c) => {
 // Route the data pages (like "/date/1970-01-01" or "/date/")
 app.get('/:categoryKey', appendTrailingSlash());
 app.get('/:categoryKey/:input/', trimTrailingSlash());
-app.on('GET', ['/:categoryKey/', '/:categoryKey/:input'], (c) => {
+app.on('GET', ['/:categoryKey/', '/:categoryKey/:input'], async (c) => {
   const { categoryKey, input } = c.req.param();
 
   if (!Object.hasOwn(DATA_HANDLERS, categoryKey)) {
@@ -40,7 +40,7 @@ app.on('GET', ['/:categoryKey/', '/:categoryKey/:input'], (c) => {
   }
 
   // Get the output
-  const output = DATA_HANDLERS[categoryKey](input);
+  const output = await DATA_HANDLERS[categoryKey](input, c.env);
 
   if (output == null) {
     return c.notFound();
