@@ -1,8 +1,9 @@
-import { getPrimeTable } from './prime-table';
+import { PRIME_BITMAP, loadPrimeBitmap } from './prime-bitmap';
+
 const NUMBER_LIMIT = 2n ** 40n;
 
 /**
- * Handles natural numbers
+ * Handles integers >= 0
  */
 export async function handleNumber(input: string = getRandom(), env) {
   if (!isValid(input)) {
@@ -12,28 +13,41 @@ export async function handleNumber(input: string = getRandom(), env) {
   const num = BigInt(input);
   const output = {
     pageName: `Number ${num}`,
-    data: {},
+    data: {
+      'Prime factorization': null,
+      'Property': [],
+    },
   };
 
-  // Prime factorization
+  // Prime or not
   if (num > 1n) {
-    const PRIME_TABLE = await getPrimeTable(env);
-    const { isPrime, primeFactors } = factor(num, PRIME_TABLE);
+    await loadPrimeBitmap(env);
 
-    if (isPrime) {
+    if (isSmallPrime(num)) {
       output.pageName = `Prime number ${num}`;
     } else {
-      output.data['Prime factorization'] = (
-        Object.entries(primeFactors)
-          .map(([p, exponent]) => exponent === 1n ? `${p}` : `${p}^${exponent}`)
-          .join(' × ')
-      );
+      // Prime factorization
+      const { primeFactors, isPrime } = factor(num);
+
+      if (isPrime) {
+        output.pageName = `Prime number ${num}`;
+      } else {
+        output.data['Prime factorization'] = (
+          Object.entries(primeFactors)
+            .map(([p, exponent]) => (
+              exponent === 1n ? `${p}` : `${p}^${exponent}`
+            ))
+            .join(' × ')
+        );
+      }
     }
   }
 
   // Even or odd
   const isEven = num % 2n === 0n;
-  output.data['Property'] = `${num} is an ${isEven ? 'even' : 'odd'} number.`;
+  output.data['Property'].push(`${num} is an ${isEven ? 'even' : 'odd'} number.`);
+
+  output.data['Property'] = output.data['Property'].join(<br />);
 
   return output;
 }
@@ -60,33 +74,56 @@ function getRandom(): string {
 }
 
 /**
- * Performs prime factorization
+ * Checks if a number is a prime number within the prime bitmap
  */
-function factor(num: bigint, PRIME_TABLE) {
-  // If the number is a known prime
-  if (PRIME_TABLE.has(num)) {
-    return { isPrime: true };
+function isSmallPrime(num: bigint) {
+  if (num < 5n) {
+    return num === 2n || num === 3n;
   }
 
+  if (!(num % 6n === 5n || num % 6n === 1n)) {
+    return false;
+  }
+
+  const i = (num - (num % 6n === 5n ? 5n : 4n)) / 3n;
+  const byteIndex = Number(i / 8n);
+  const bitIndex = Number(i % 8n);
+  return (PRIME_BITMAP[byteIndex] & (0b1000_0000 >> bitIndex)) !== 0;
+}
+
+/**
+ * Performs prime factorization of a number
+ */
+function factor(num: bigint) {
   let rest = num;
   const primeFactors = {};
 
   // Helper function
-  const factorOut = (i: bigint) => {
-    while (rest % i === 0n) {
-      primeFactors[`${i}`] ??= 0n;
-      primeFactors[`${i}`]++;
-      rest /= i;
+  const factorOut = (divisor: bigint) => {
+    while (rest % divisor === 0n) {
+      primeFactors[`${divisor}`] ??= 0n;
+      primeFactors[`${divisor}`]++;
+      rest /= divisor;
     }
   };
 
-  // Factor out known primes
-  for (const p of PRIME_TABLE) {
-    if (p * p > rest) {
-      break;
-    }
+  factorOut(2n);
+  factorOut(3n);
 
-    factorOut(p);
+  // Factor out known primes
+  LOOP: for (const [byteIndex, byte] of PRIME_BITMAP.entries()) {
+    for (let bitIndex = 0; bitIndex < 8; bitIndex++) {
+      if ((byte & (0b1000_0000 >> bitIndex)) !== 0) {
+        const i = 8 * byteIndex + bitIndex;
+        const p = 3n * BigInt(i) + (i % 2 === 0 ? 5n : 4n);
+
+        if (p * p > rest) {
+          break LOOP;
+        }
+
+        factorOut(p);
+      }
+    }
   }
 
   // If the number is prime
@@ -100,5 +137,5 @@ function factor(num: bigint, PRIME_TABLE) {
     primeFactors[`${rest}`]++;
   }
 
-  return { primeFactors };
+  return { primeFactors, isPrime: false };
 }

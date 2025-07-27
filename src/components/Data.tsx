@@ -33,16 +33,20 @@ export const Data = ({
     {...props}
   >
     <table id="data">
-      {data && Object.entries(data).map(([key, value]) => (
-        <tbody>
-          <tr>
-            <th scope="rowgroup">{key}</th>
-          </tr>
-          <tr>
-            <td>{value}</td>
-          </tr>
-        </tbody>
-      ))}
+      {data && (
+        Object.entries(data)
+          .filter(([key, value]) => value != null)
+          .map(([key, value]) => (
+            <tbody>
+              <tr>
+                <th scope="rowgroup">{key}</th>
+              </tr>
+              <tr>
+                <td dangerouslySetInnerHTML={{ __html: value }} />
+              </tr>
+            </tbody>
+          ))
+      )}
     </table>
   </Base>
 );
